@@ -1,0 +1,47 @@
+<html>
+<head>
+	<title>Movie Search</title>
+	<link rel="stylesheet" type="text/css" href="client.css" />
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="client.js"></script>
+</head>
+<body>
+	<div class="topbar">
+		<input type="text" id="search" />
+		<div id="filters">&nbsp;</div>
+		<div id="controlButton">
+			<a href='#' id="toggleControls" class="floatLeft">Advanced</a>
+			<div id="indicator">&nbsp;</div>
+			</div class="clear">&nbsp;</div>
+		</div>
+	</div>
+	
+	<div id="result">
+	results
+	</div>
+
+	<div id='controlMenu' class='hidden'>
+		<div>docs : <span id='docs'>&nbsp;</span></div>
+		<div>time : <span id='time'>&nbsp;</span></div>
+		<div>need resolve : <span id='needResolve'>&nbsp;</span></div>
+		<div>resolving : <span id='resolving'>&nbsp;</span></div>
+		<div id='imdb' class='hidden'>
+			<hr />
+			<div>done : <span id='resolveDone'>&nbsp;</span></div>
+			<div>waiting : <span id='resolveWaiting'>&nbsp;</span></div>
+			<div>queue : <span id='resolveQueue'>&nbsp;</span></div>
+			<div>errors : <span id='resolveErrors'>&nbsp;</span></div>
+			<div>httpHits : <span id='resolveHits'>&nbsp;</span></div>
+			<div>progress : <span id='resolveProgress'>&nbsp;</span></div>
+			<hr />
+		</div>
+		<div>scan folders: <a href='#' id='scan'>start</a></div>
+		<div>imdb resolve: 
+			<a href='#' id='resolveStart'>start</a> /
+			<a href='#' id='resolveStop'>stop</a>
+		</div>
+		<div>update index: <a href='#' id='index'>start</a></div>
+		<div>write store: <a href='#' id='save'>start</a></div>
+	</div>
+</body>
+</html>

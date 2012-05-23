@@ -1,0 +1,170 @@
+/* client css */
+
+
+
+/* GENERAL */
+
+.clear {
+	clear: both;
+	width:1px;
+	height:1px;
+	overflow: hidden;
+	display: block;
+}
+
+.floatLeft {
+	display:block;
+	float:left;
+}
+
+.hidden {
+	display:none !important;
+}
+
+
+
+
+/* TOP BAR */
+
+.topbar {
+	border-bottom:1px dashed #ddd;
+	overflow:hidden;
+	padding-bottom: 5px;
+}
+
+/* TOP BAR CHILDREN */
+
+#search {
+	/*position:relative;*/
+	display:block;
+	float:left;
+	width:250px;
+	height:22px;
+	border:1px solid #aaa;
+}
+
+#filters {
+	display:block;
+	float:left;
+	height:20px;
+}
+
+#controlButton {
+	position:relative;
+	display:block;
+	float:right;
+	width:100px;
+	height:18px;
+	/*border:2px solid #333;*/
+}
+
+
+/* CONTROL MENU CHILDREN */
+
+#toggleControls {
+	height:15px;
+	text-decoration: none;
+	color: #666;
+	font-size:13px;
+	padding:1px 5px;
+	border:1px solid #ccc;
+	background-color: #eee;
+}
+
+#toggleControls:hover {
+	border:1px solid #000;
+	background-color: #ccc;
+}
+
+#indicator {
+	display:block;
+	float:left;
+	height:15px;
+	
+	margin-top:1px;
+	width:15px;
+	border:1px solid #eee;
+	background-color:red;
+}
+
+.green {
+	background-color:green !important;
+}
+
+
+
+/* CONTROL MENU */
+
+#controlMenu {
+	border:2px solid #666;
+	position: absolute;
+	display:block;
+	top:28px;
+	right:30px;
+	width:250px;
+	/*height:250px;*/
+	padding:4px;
+	background-color:#eee;
+	z-index:10;
+}
+
+#imdb {
+	margin-left:15px;
+}
+
+
+
+/* RESULTS */
+
+#result {
+	font-family:'georgia';
+	position:relative;
+}
+
+.movie {
+	border:1px solid #ddd;
+	overflow: auto;
+}
+
+.movie a {
+	font-size:10px;
+}
+
+.content {
+	display:block;
+	float:left;
+	position:relative;
+}
+
+.thumb {
+	display:block;
+	float:left;
+	width:106px;
+	height:152px;
+	position:relative;
+	margin-right:5px;
+}
+
+.director {
+	position:relative;
+	margin:0;
+	font-size:13px;
+	color:#666;
+}
+
+.actors {
+	position:relative;
+	margin:0;
+	font-size:13px;
+	color:#ccc;
+}
+
+.title {
+	position:relative;
+	margin:0;
+	font-size:18px;
+}
+
+.plot {
+	position:relative;
+}
