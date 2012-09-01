@@ -1,1 +1,1 @@
-..\node.exe movies.js ..\.config_ext
+.\node.exe movies.js .\data\config_ext

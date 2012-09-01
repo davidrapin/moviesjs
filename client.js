@@ -5,6 +5,8 @@ $(function() {
 	var getMovieHtml = function(movie, score) {
 		var img = movie.image.lastIndexOf("http", 0) === 0 ? movie.image : "";
 		var h = '<div class="movie">'
+		+ '<div class="runtime">Runtime: ' + (movie.runtime || 'unknown') + '</div>'
+		+ '<div class="rating">' + (movie.rating || '?') + '/10</div>'
 		+ '<img src="' + img + '" class="thumb" />'
 		+ '<div class="text">'
 		+ '<h1 class="title">' + (movie.title || movie.fileTitle) + ' (' + movie.year + ')</h1>'
@@ -58,7 +60,7 @@ $(function() {
 		r.text(query);
 		$.ajax("/q/" + encodeURIComponent(query), {
 			success: function(data, status, req) { showSearchResults(data); },
-			error: function(req, textStatus, error) { showError(error); }, 
+			error: function(req, textStatus, error) { showError('searching', error); }, 
 		});
 	});
 
@@ -154,7 +156,7 @@ $(function() {
 			.click(function() {
 				$.ajax("/filter/" + filterName, {
 					success: function(data, status, req) { showSearchResults(data); },
-					error: function(req, textStatus, error) { showError(error); }, 
+					error: function(req, textStatus, error) { showError('filtering on ' + filterName, error); }, 
 				});	
 			})
 			.appendTo('#filters')
@@ -166,6 +168,26 @@ $(function() {
 	addFilter('manyFiles');
 	addFilter('imdbNotDone');
 	addFilter('imdbNotFound');
+
+	var addValueEditor = function(buttonId, basePath, valueName) {
+		$('#' + buttonId).click(function() {
+			$.ajax(basePath + '/get', {
+				success: function(data, status, req) { 
+					var oldValue = data;
+					var newValue = prompt("Set '" + valueName + "':", oldValue);
+					if (newValue && newValue !== oldValue) {
+						$.ajax(basePath + '/set/' + encodeURIComponent(newValue), {
+							success: function(data, status, req) { showResult("'" + valueName + "' updated", data); },
+							error: function(req, textStatus, error) { showError('getting ' + valueName, error); }, 
+						});	
+					}
+				},
+				error: function(req, textStatus, error) { showError('setting ' + valueName, error); }, 
+			});
+		});
+	};
+	addValueEditor('player', '/player', 'media player path');
+	addValueEditor('moviePathModifier', '/moviePathModifier', 'movie path modifier');
 
 	$('#search').focus();
 });

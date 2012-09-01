@@ -1,6 +1,5 @@
 
 var fs = require('fs');
-var path = require ('path');
 
 function Config(file, autoSave) {
 	this.file = file;
@@ -10,7 +9,7 @@ function Config(file, autoSave) {
 
 Config.prototype.load = function() {
 	this.values = {};
-	if (!path.existsSync(this.file)) { return 0; }
+	if (!fs.existsSync(this.file)) { return 0; }
 	var data = fs.readFileSync(this.file, "utf8");
 	if (!data) { return 0; }
 	this.values = JSON.parse(data);
@@ -35,6 +34,11 @@ Config.prototype.set = function(key, value) {
 	if (this.autoSave) { this.save(); }
 };
 
+Config.prototype.setIfEmpty = function(key, value) {
+	var v = this.values[key];
+	if (v !== undefined && v !== null && v !== '') return;
+	this.set(key, value);
+};
 
 exports.new = function(file, autoSave) { 
 	return new Config(file, autoSave); 

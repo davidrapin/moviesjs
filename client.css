@@ -124,6 +124,7 @@
 .movie {
 	border:1px solid #ddd;
 	overflow: auto;
+	position: relative;
 }
 
 .movie a {
@@ -167,4 +168,16 @@
 
 .plot {
 	position:relative;
+}
+
+.runtime {
+	position:absolute;
+	right:5px;
+	top:0px;
+}
+
+.rating {
+	position:absolute;
+	right:5px;
+	top:15px;
 }

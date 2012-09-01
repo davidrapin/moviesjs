@@ -113,7 +113,7 @@ Store.prototype.stopResolving = function() {
 Store.prototype.readStore = function(callback) {
 	var store = this;
 
-	path.exists(store.file, function(exists) {
+	fs.exists(store.file, function(exists) {
 		if (!exists) {
 			callback.call(store, 0);
 			return;
@@ -182,7 +182,7 @@ Store.prototype.scanDirs = function(videoPaths, callback) {
 Store.prototype.scanDir = function(videosPath, callback) {
 	var store = this;
 
-	path.exists(videosPath, function(exists) {
+	fs.exists(videosPath, function(exists) {
 		if (!exists) {
 			callback.call(
 				store,

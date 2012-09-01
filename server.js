@@ -56,6 +56,18 @@ Server.prototype.start = function(callback) {
 		} else if (req.url.startsWith('/play/')) {
 			server.play(res, req.url.substring('/play/'.length));
 
+		} else if (req.url == '/player/get') {
+			server.getPlayerPath(res);
+
+		} else if (req.url.startsWith('/player/set')) {
+			server.setPlayerPath(res, req.url.substring('/player/set/'.length))
+
+		} else if (req.url == '/moviePathModifier/get') {
+			server.getMoviePathModifier(res);
+
+		} else if (req.url.startsWith('/moviePathModifier/set')) {
+			server.setMoviePathModifier(res, req.url.substring('/moviePathModifier/set/'.length))
+		
 		} else if (req.url.startsWith('/q/')) {
 			server.query(res, req.url.substring('/q/'.length));
 
@@ -136,8 +148,16 @@ Server.prototype.play = function(response, query) {
 		response.writeHead(204);
 		response.end();
 		
+		var filePath = movie.files[fileIndex];
+		var modifier = this.config.get('moviePathModifier');
+		if (modifier) {
+			var func = eval("( " + modifier + " );");
+			filePath = func.call(undefined, filePath);
+			log("[modified]:" + filePath);
+		}
+
 		var player = this.config.get('playerPath');
-		child.execFile(player, [movie.files[fileIndex]], {}, function(error) {
+		child.execFile(player, [filePath], {}, function(error) {
 			if (error) { warn(error); }
 			else { log("player done"); }
 		});
@@ -182,6 +202,36 @@ Server.prototype.scan = function(response) {
 		server.jsonResponse(response, result);
 
 	});
+};
+
+Server.prototype.getPlayerPath = function(response) {
+	var p = this.config.get('playerPath');
+	this.jsonResponse(response, p);
+};
+
+Server.prototype.setPlayerPath = function(response, p) {
+	var p = decodeURIComponent(p);
+	this.config.set('playerPath', p);
+	var result = { 
+		'type': 'success',
+		'playerPath': p
+	};
+	this.jsonResponse(response, result);
+};
+
+Server.prototype.getMoviePathModifier = function(response) {
+	var p = this.config.get('moviePathModifier');
+	this.jsonResponse(response, p);
+};
+
+Server.prototype.setMoviePathModifier = function(response, p) {
+	var p = decodeURIComponent(p);
+	this.config.set('moviePathModifier', p);
+	var result = { 
+		'type': 'success',
+		'moviePathModifier': p
+	};
+	this.jsonResponse(response, result);
 };
 
 Server.prototype.index = function(response) {
@@ -235,7 +285,78 @@ Server.prototype.query = function(res, q)  {
 	q = decodeURIComponent(q);
 	log("query : '" + q + "'")
 	
-	var list = [];
+	function SearchEngine(store, indexer) { 
+		this.store = store;
+		this.indexer = indexer;
+	};
+	SearchEngine.prototype.search = function(query) {
+		var specials = [],
+			requestTerms = [],
+			words = query.split(/\s+/),
+			re = /^([+]{1,2})([a-z]+)(\<|\>|\=|\!|\~)(.+)$/i,
+			w, s;
+
+		for (var i=0, l=words.length; i<l; ++i) {
+			w = words[i];
+			if (s = re.exec(w)) {
+				specials.push({
+					strict: s[1].length === 2,
+					name: s[2],
+					operator: s[3],
+					value: s[4] || ''
+				});
+			} else {
+				s = String.normalize(w);
+				if (!s.match(/^\s*$/)) requestTerms.push(s);
+			}
+		}
+
+		log("specials: " + JSON.stringify(specials));
+		log("requestTerms: " + JSON.stringify(requestTerms));
+		var matches = this.indexer.query(requestTerms);
+
+		// loop through all matching IDs
+		var results = [], jl = specials.length, match, sf, movie, add;
+		for (var i=0, l=matches.length; i<l; ++i) {
+			match = matches[i];
+			movie = this.store.getMovieBySafeId(match.id);
+
+			// check if the movies also matches all special filters
+			add = true;
+			for (var j=0; j<jl; ++j) {
+				sf = specials[j];
+				if (!this.matchSpecialFilter(sf, movie)) {
+					add = false;
+					break;
+				}
+			}
+
+			// add to results if everything matched
+			if (add) results.push({
+				'score': (Math.round(match.score*10)/10), 
+				'movie' : movie
+			});
+		}
+
+		return results;
+	};
+	SearchEngine.prototype.matchSpecialFilter = function(s, object) {
+
+		var v = object[s.name];
+		if (!s.strict && (v === null || v === undefined ||v === '')) return true;
+
+		switch(s.operator) {
+			case '>': return v >= s.value;
+			case '<': return v <= s.value;
+			case '=': return v === s.value;
+			case '!': return v !== s.value;
+			case '~': return v && (v+"").toLowerCase().indexOf(s.value.toLowerCase()) >= 0;
+		}
+		return true;
+	};
+	var search = new SearchEngine(this.store, this.indexer);
+
+	/*var list = [];
 	var results = this.indexer.query(q);
 	for (var i=0, l=results.length; i<l; ++i) {
 		var r = results[i];
@@ -244,8 +365,8 @@ Server.prototype.query = function(res, q)  {
 			'score': (Math.round(r.score*10)/10), 
 			'movie' : m
 		});
-	}
-	this.jsonResponse(res, { 'q': q, 'results': list });
+	}*/
+	this.jsonResponse(res, { 'q': q, 'results': search.search(q) });
 };
 
 Server.movieFilters = {

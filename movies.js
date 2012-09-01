@@ -6,12 +6,12 @@ var warn = c.warn;
 if (process.argv.length !== 3) {
 	log("argument required : config file");
 	return;
-} 
+}
 var configFile = process.argv[2];
 log("loading config. file '" + configFile + "' ...");
 
 var config = require('./config.js').new(configFile, true);
-config.set('playerPath', 'C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe');
+config.setIfEmpty('playerPath', 'C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe');
 
 var store = require('./store.js').new(
 	config.get('storeCache'),

@@ -59,7 +59,7 @@ Indexer.prototype.addDoc = function(docId, text) {
 	for (i=0, wordCount=words.length; i<wordCount; ++i) {
 		w = words[i];
 
-		if (!/^\w+$/.test(w)) {
+		if (w !== '' && !/^\w+$/.test(w)) {
 			log("not indexed : '" + w + "'");
 			continue;
 		}
@@ -91,11 +91,17 @@ Indexer.prototype.queryByTerm = function(termData) {
 };
 
 Indexer.prototype.query = function(request) {
-	request = String.normalize(request);
 
-	var requestTerms = request.split(/\s+/),
-			mergedScores = [], results = [],
-			scores, i, il, j, jl, docId, termData, matches;
+	var requestTerms;
+	if (Array.isArray(request)) {
+		requestTerms = request;
+	} else {
+		request = String.normalize(request);
+		requestTerms = request.split(/\s+/);
+	}
+
+	var mergedScores = [], results = [],
+		scores, i, il, j, jl, docId, termData, matches;
 	
 	for (i=0, il=requestTerms.length; i<il; ++i) {
 		
