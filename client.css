@@ -144,6 +144,12 @@
 	height:152px;
 	position:relative;
 	margin-right:5px;
+	border:none;
+	z-index: 0;
+}
+
+.text {
+	margin-left:110px;
 }
 
 .director {

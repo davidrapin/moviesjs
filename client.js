@@ -7,7 +7,7 @@ $(function() {
 		var h = '<div class="movie">'
 		+ '<div class="runtime">Runtime: ' + (movie.runtime || 'unknown') + '</div>'
 		+ '<div class="rating">' + (movie.rating || '?') + '/10</div>'
-		+ '<img src="' + img + '" class="thumb" />'
+		+ '<a href="http://www.imdb.com/title/' + movie.imdbId + '" target="_blank"><img src="' + img + '" class="thumb" /></a>'
 		+ '<div class="text">'
 		+ '<h1 class="title">' + (movie.title || movie.fileTitle) + ' (' + movie.year + ')</h1>'
 		+ '<h2 class="director">by ' + movie.director + '</h2>'

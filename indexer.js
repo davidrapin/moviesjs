@@ -103,14 +103,19 @@ Indexer.prototype.query = function(request) {
 	var mergedScores = [], results = [],
 		scores, i, il, j, jl, docId, termData, matches;
 	
+	// for each request term
 	for (i=0, il=requestTerms.length; i<il; ++i) {
 		
+		// get all matching tesaurus terms with associated weight
 		matches = this.getTermMatches(requestTerms[i]);
 
+		// for each matching tesaurus term
 		for (j=0, jl=matches.length; j<jl; ++j) {
 
+			// get all docs matching the term with associated score
 			scores = this.queryByTerm(matches[j].termData);
 
+			// for each matchig doc, compute the final score as (query-term-weight * term-doc-match)
 			for (docId in scores) {
 				if (!mergedScores[docId]) {
 					mergedScores[docId] = 0;
@@ -119,6 +124,11 @@ Indexer.prototype.query = function(request) {
 				mergedScores[docId] += scores[docId] * matches[j].weight;
 			}
 		}
+	}
+
+	if (!mergedScores.length && requestTerms.length && requestTerms[0] === '*') {
+		//var ids = Object.keys(this.docs);
+		for (docId in this.docs) results.push({ 'id' : docId, 'score' : 0});
 	}
 
 	for (docId in mergedScores) {

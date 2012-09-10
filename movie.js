@@ -58,6 +58,16 @@ Movie.prototype.loadFromJSON = function(json) {
 		this[key] = movie[key];
 	}
 
+	this.duration = 0;
+	if (this.runtime) {
+		var re = /(?:(\d+)\s+(h)r?s?)?\s*(?:(\d+)\s+(m)i?n?s?)?/i;
+		var match = re.exec(this.runtime);
+		if (match) {
+			this.duration = (match[1] || 0)*60 + (match[3] || 0)*1;
+			//log('[' + this.runtime + '] : (' + match[1] + ')-(' + match[2] + ')-(' + match[3] + ')-(' + match[4] + ') = ' + this.duration);
+		}
+	}
+
 	// todo: delete
 	/*this.forFiles(function(file) {
 		this.readInfosFromFilePath(file);
